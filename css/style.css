@@ -1,0 +1,430 @@
+/* ===== Переменные: цвета и шрифты в одном месте ===== */
+:root {
+  --bg: #ffffff;          /* фон */
+  --text: #000000;        /* основной текст */
+  --muted: #8a8a8a;       /* серый (бренд, подписи) */
+  --line: #000000;        /* тонкие разделители */
+  --placeholder: #e9e9e9; /* серая заглушка вместо фото */
+  --overlay: rgba(0, 0, 0, 0.4); /* затемнение под меню */
+
+  --font-head: "Oswald", "Arial Narrow", sans-serif;   /* меню, заголовки */
+  --font-mono: "IBM Plex Mono", "Courier New", monospace; /* товары, цены, текст */
+
+  --gutter: 16px;         /* отступ от краёв экрана */
+  --radius-card: 8px;     /* скругление фото товара */
+  --radius-tile: 14px;    /* скругление плиток категорий */
+}
+
+/* ===== Базовые правила ===== */
+* {
+  box-sizing: border-box; /* ширина элемента включает padding и рамку */
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Пока открыто меню, страница под ним не прокручивается */
+body.no-scroll {
+  overflow: hidden;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+h1, h2, h3, p {
+  margin: 0;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+/* ===== Шапка ===== */
+.header {
+  position: sticky; /* шапка «прилипает» к верху при прокрутке */
+  top: 0;
+  z-index: 10;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+}
+
+/* Три колонки: бургер | логотип | Telegram */
+.header__bar {
+  display: grid;
+  grid-template-columns: 44px 1fr 44px;
+  align-items: center;
+  padding: 8px calc(var(--gutter) - 10px); /* -10px: у кнопок свои поля */
+}
+
+.icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.icon-btn:hover {
+  opacity: 0.6;
+}
+
+.logo {
+  font-family: var(--font-head);
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+/* Строка категорий на телефоне спрятана — там бургер */
+.header__nav {
+  display: none;
+}
+
+.header__nav a {
+  font-family: var(--font-head);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.header__nav a:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* ===== Выезжающее меню (телефон) ===== */
+.drawer {
+  position: fixed;
+  inset: 0; /* на весь экран */
+  z-index: 100;
+  visibility: hidden; /* закрытое меню не ловит клики и Tab */
+  transition: visibility 0s 0.3s; /* прячем после окончания анимации */
+}
+
+.drawer.is-open {
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+.drawer__overlay {
+  position: absolute;
+  inset: 0;
+  background: var(--overlay);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.drawer.is-open .drawer__overlay {
+  opacity: 1;
+}
+
+.drawer__panel {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: min(320px, 85vw);
+  padding: 8px var(--gutter) 32px;
+  overflow-y: auto;
+  background: var(--bg);
+  border-right: 1px solid var(--line);
+  transform: translateX(-100%); /* спрятано за левым краем */
+  transition: transform 0.3s;
+}
+
+.drawer.is-open .drawer__panel {
+  transform: translateX(0);
+}
+
+.drawer__close {
+  margin-left: -10px;
+}
+
+.drawer__links {
+  display: flex;
+  flex-direction: column;
+  margin-top: 8px;
+}
+
+.drawer__links a {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+  font-family: var(--font-head);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* ===== Основная часть ===== */
+.main {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+.section {
+  padding: 28px 0;
+}
+
+/* Тонкая линия между разделами */
+.section + .section {
+  border-top: 1px solid var(--line);
+}
+
+/* Заголовок раздела слева, ссылка «ALL →» справа */
+.section__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 16px;
+}
+
+.section__title {
+  font-family: var(--font-head);
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.section__more {
+  font-family: var(--font-head);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+}
+
+.section__more:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* Сообщения: «пусто», ошибки */
+.message {
+  color: var(--muted);
+}
+
+/* ===== Карусель ===== */
+.carousel {
+  display: flex;
+  gap: 12px;
+  /* Растягиваем ленту до краёв экрана, а отступ даём изнутри */
+  margin: 0 calc(-1 * var(--gutter));
+  padding: 0 var(--gutter) 8px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory; /* при свайпе карточка «защёлкивается» */
+  scroll-padding: 0 var(--gutter);
+  scrollbar-width: thin;
+}
+
+/* На телефоне видно 2 карточки и край третьей — понятно, что можно листать */
+.carousel > .card {
+  flex: 0 0 42%;
+  scroll-snap-align: start;
+}
+
+.carousel > .message {
+  padding: 0;
+}
+
+/* ===== Карточка товара ===== */
+.card {
+  display: block;
+}
+
+.card__photo {
+  position: relative; /* чтобы плашку статуса поставить в угол */
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  background: var(--placeholder);
+}
+
+.card__photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* фото заполняет рамку без искажений */
+}
+
+.card__brand {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.card__name,
+.card__price {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.card__name {
+  margin-top: 2px;
+}
+
+/* Плашка статуса в левом нижнем углу фото */
+.badge {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  padding: 2px 8px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+/* Проданное — инверсия: чёрная плашка, белый текст */
+.badge--sold {
+  background: var(--text);
+  color: var(--bg);
+}
+
+/* ===== Плитки категорий ===== */
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2 колонки на телефоне */
+  gap: 24px 12px;
+}
+
+.tile__photo {
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: var(--radius-tile);
+  background: var(--placeholder);
+}
+
+.tile__photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s;
+}
+
+.tile:hover .tile__photo img {
+  transform: scale(1.03);
+}
+
+.tile__name {
+  display: block;
+  margin-top: 10px;
+  font-family: var(--font-head);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+/* ===== Подвал ===== */
+.footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  margin-top: 24px;
+  padding: 40px var(--gutter);
+  border-top: 1px solid var(--line);
+  text-align: center;
+}
+
+.footer__how {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  max-width: 420px;
+}
+
+.footer__title {
+  font-family: var(--font-head);
+  font-size: 18px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.footer__link {
+  border-bottom: 1px solid var(--line);
+}
+
+.footer__link:hover {
+  opacity: 0.6;
+}
+
+.footer__copy {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* ===== Компьютер (экран от 900px) ===== */
+@media (min-width: 900px) {
+  :root {
+    --gutter: 40px;
+  }
+
+  .logo {
+    font-size: 34px;
+  }
+
+  /* Бургер не нужен, но место держим — чтобы логотип стоял ровно по центру */
+  .header__burger {
+    visibility: hidden;
+  }
+
+  /* Категории в строку под логотипом */
+  .header__nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px 28px;
+    padding: 0 var(--gutter) 14px;
+  }
+
+  .section {
+    padding: 40px 0;
+  }
+
+  .section__title {
+    font-size: 30px;
+  }
+
+  /* На компьютере видно 4 карточки и край пятой */
+  .carousel > .card {
+    flex-basis: 23%;
+  }
+
+  .carousel {
+    gap: 20px;
+  }
+
+  .tiles {
+    grid-template-columns: repeat(3, 1fr); /* 3 колонки */
+    gap: 40px 20px;
+  }
+
+  .tile__name {
+    font-size: 20px;
+  }
+}

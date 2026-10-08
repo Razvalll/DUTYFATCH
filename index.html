@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <!-- viewport нужен, чтобы на телефоне сайт не был «уменьшенной копией» компьютерной версии -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DUTYFATCH — винтажная одежда, Брест</title>
+  <meta name="description" content="Винтажная одежда из Японии, Китая, Таиланда. Что в наличии и что едет.">
+
+  <!-- Шрифты Google: Oswald (меню, заголовки) и IBM Plex Mono (товары, цены, текст) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Сюда common.js вставит шапку и выезжающее меню -->
+  <div id="site-header"></div>
+
+  <main class="main">
+
+    <!-- 1. Новые поступления (в наличии) -->
+    <section class="section">
+      <div class="section__head">
+        <h2 class="section__title">NEW IN</h2>
+        <a class="section__more" href="catalog.html?cat=all">ALL →</a>
+      </div>
+      <div class="carousel" id="new-in"><p class="message">Загрузка…</p></div>
+    </section>
+
+    <!-- 2. Плитки категорий -->
+    <section class="section">
+      <div class="section__head">
+        <h2 class="section__title">CATEGORIES</h2>
+      </div>
+      <div class="tiles" id="category-tiles"></div>
+    </section>
+
+    <!-- 3. Товары в пути -->
+    <section class="section">
+      <div class="section__head">
+        <h2 class="section__title">COMING SOON</h2>
+        <a class="section__more" href="catalog.html?cat=coming">ALL →</a>
+      </div>
+      <div class="carousel" id="coming-soon"><p class="message">Загрузка…</p></div>
+    </section>
+
+  </main>
+
+  <!-- Сюда common.js вставит подвал -->
+  <div id="site-footer"></div>
+
+  <!-- Порядок важен: данные → общие функции → код главной -->
+  <script src="js/data.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/home.js"></script>
+</body>
+</html>
