@@ -33,14 +33,10 @@ renderCategoryTiles();
 // Когда данные пришли — рисуем карточки вместо неё.
 loadData()
   .then(() => {
-    // Новые строки в таблице добавляются снизу, поэтому переворачиваем:
-    // самые свежие вещи окажутся первыми
-    const newIn = PRODUCTS
-      .filter(p => p.status === "available")
-      .reverse()
-      .slice(0, NEW_IN_LIMIT);
-
-    const coming = PRODUCTS.filter(p => p.status === "transit");
+    // Те же правила, что в каталоге: NEW IN — начало ALL PRODUCTS,
+    // COMING SOON — то же, что в категории coming. Свежие вещи первыми.
+    const newIn = productsForCategory(PRODUCTS, "all").slice(0, NEW_IN_LIMIT);
+    const coming = productsForCategory(PRODUCTS, "coming");
 
     renderCarousel("new-in", newIn);
     renderCarousel("coming-soon", coming);

@@ -18,13 +18,16 @@ const CATEGORIES = [
   { slug: "sold", name: "SOLD" }
 ];
 
-// ===== Подписи статусов (логику доделаем в этапе 3) =====
+// ===== Надписи статусов на карточке (у available надписи нет) =====
 const STATUS_LABELS = {
-  available: "В наличии",
-  reserved: "Бронь",
-  transit: "В пути",
-  sold: "Продано"
+  available: "",
+  reserved: "ЗАБРОНИРОВАНО",
+  transit: "В ПУТИ",
+  sold: "ПРОДАНО"
 };
+
+// Сколько дней проданная вещь остаётся на своём месте, потом уходит только в SOLD
+const SOLD_VISIBLE_DAYS = 7;
 
 // Иконка Telegram (используется в шапке)
 const TELEGRAM_ICON = `
@@ -155,27 +158,96 @@ function formatPrice(price) {
   return price === null ? "Цена по запросу" : price + " BYN";
 }
 
+// ===== Правила показа товаров по статусам =====
+
+// Сколько дней прошло с sold_date (ГГГГ-ММ-ДД). Пустая или кривая дата → null
+function daysSinceSold(product) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(product.sold_date);
+  if (!match) return null;
+
+  // Обе даты — полночь по местному времени, считаем целые дни между ними
+  const sold = new Date(match[1], match[2] - 1, match[3]);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  // round — чтобы переход на летнее/зимнее время не давал 6,96 дня
+  return Math.round((today - sold) / (24 * 60 * 60 * 1000));
+}
+
+// Показывать ли товар в категории slug. Одна функция для главной и каталога.
+function isVisibleIn(product, slug) {
+  // «Своё место» — категория товара или ALL PRODUCTS
+  const ownPlace = slug === "all" || slug === product.category;
+
+  switch (product.status) {
+    case "available":
+    case "reserved":
+      return ownPlace;
+
+    case "transit":
+      return slug === "coming"; // едущие — только в COMING SOON
+
+    case "sold": {
+      if (slug === "sold") return true; // в SOLD — все проданные
+      const days = daysSinceSold(product);
+      // Свежая продажа остаётся на своём месте, старая или без даты — нет
+      return days !== null && days <= SOLD_VISIBLE_DAYS && ownPlace;
+    }
+
+    default:
+      return false;
+  }
+}
+
+// Товары категории в нужном порядке.
+// Новые строки таблицы добавляются снизу, поэтому переворачиваем — свежие первыми.
+// filter() создаёт новый массив, так что reverse() не портит PRODUCTS.
+function productsForCategory(products, slug) {
+  const list = products.filter(p => isVisibleIn(p, slug)).reverse();
+
+  // В SOLD — по дате продажи, новые первыми; без даты — в конце
+  if (slug === "sold") {
+    const dateKey = p => (daysSinceSold(p) === null ? "" : p.sold_date);
+    list.sort((a, b) => dateKey(b).localeCompare(dateKey(a)));
+  }
+  return list;
+}
+
 // ===== Карточка товара =====
 // Принимает один товар, возвращает HTML-строку карточки.
 function productCard(product) {
   // photos — уже массив путей, на карточке берём первое фото
   const photo = product.photos[0];
   const label = STATUS_LABELS[product.status] || "";
+  const isSold = product.status === "sold";
 
   // Если фото не загрузилось, onerror убирает картинку — остаётся серый фон
   const img = photo
     ? `<img src="${escapeHtml(photo)}" alt="${escapeHtml(product.name)}" loading="lazy" onerror="this.remove()">`
     : "";
 
+  // Проданное — надпись по центру фото, остальные статусы — плашка в углу
+  let mark = "";
+  if (isSold) {
+    mark = `<span class="card__sold">${label}</span>`;
+  } else if (label) {
+    mark = `<span class="badge">${label}</span>`;
+  }
+
+  // У едущих вещей под ценой — когда ожидается
+  const eta = product.status === "transit" && product.eta
+    ? `<p class="card__eta">Ожидается: ${escapeHtml(product.eta)}</p>`
+    : "";
+
   return `
-    <a class="card" href="product.html?id=${encodeURIComponent(product.id)}">
+    <a class="card${isSold ? " card--sold" : ""}" href="product.html?id=${encodeURIComponent(product.id)}">
       <div class="card__photo">
         ${img}
-        ${label ? `<span class="badge badge--${product.status}">${label}</span>` : ""}
+        ${mark}
       </div>
       <p class="card__brand">${escapeHtml(product.brand)}</p>
       <h3 class="card__name">${escapeHtml(product.name)}</h3>
       <p class="card__price">${formatPrice(product.price)}</p>
+      ${eta}
     </a>`;
 }
 

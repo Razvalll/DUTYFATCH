@@ -297,10 +297,119 @@ img {
   line-height: 1.4;
 }
 
-/* Проданное — инверсия: чёрная плашка, белый текст */
-.badge--sold {
+/* «Ожидается: …» под ценой у едущих вещей */
+.card__eta {
+  margin-top: 2px;
+  font-size: 12px;
+}
+
+/* Проданное: фото серое и полупрозрачное */
+.card--sold .card__photo img {
+  filter: grayscale(1);
+  opacity: 0.5;
+}
+
+/* Надпись «ПРОДАНО» ровно по центру фото: чёрная плашка, белый текст */
+.card__sold {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 4px 12px;
   background: var(--text);
   color: var(--bg);
+  font-family: var(--font-head);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+/* Ссылка внутри сообщения («Telegram-канал») */
+.message a {
+  color: var(--text);
+  border-bottom: 1px solid var(--line);
+}
+
+/* ===== Каталог ===== */
+.catalog {
+  padding: 24px 0 40px;
+}
+
+/* Название слева, «12 ITEMS» справа */
+.catalog__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+}
+
+.catalog__title {
+  font-family: var(--font-head);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.catalog__count {
+  flex: none; /* не сжимается, если название длинное */
+  font-family: var(--font-head);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+}
+
+/* Строка кнопок: на телефоне листается вбок, как карусель */
+.cat-tabs {
+  position: relative; /* от неё считается offsetLeft кнопок в catalog.js */
+  display: flex;
+  gap: 8px;
+  margin: 16px calc(-1 * var(--gutter)) 24px;
+  padding: 0 var(--gutter);
+  overflow-x: auto;
+  scrollbar-width: none; /* полосу прокрутки прячем — листают пальцем */
+}
+
+.cat-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.cat-tab {
+  flex: none; /* кнопки не сжимаются, лишнее уходит вбок */
+  padding: 9px 16px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-family: var(--font-head);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.cat-tab:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Активная категория залита чёрным */
+.cat-tab.is-active {
+  background: var(--text);
+  color: var(--bg);
+  text-decoration: none;
+}
+
+/* Сетка карточек: 2 колонки на телефоне */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr)); /* minmax — длинное название не растянет колонку */
+  gap: 28px 12px;
+}
+
+/* Сообщение («Загрузка…», «Пока пусто») — на всю ширину сетки */
+.grid > .message {
+  grid-column: 1 / -1;
 }
 
 /* ===== Плитки категорий ===== */
@@ -426,5 +535,25 @@ img {
 
   .tile__name {
     font-size: 20px;
+  }
+
+  .catalog {
+    padding: 40px 0 56px;
+  }
+
+  .catalog__title {
+    font-size: 40px;
+  }
+
+  /* На компьютере все кнопки помещаются — переносим, а не листаем */
+  .cat-tabs {
+    flex-wrap: wrap;
+    margin: 20px 0 32px;
+    padding: 0;
+  }
+
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)); /* 3 колонки */
+    gap: 48px 20px;
   }
 }

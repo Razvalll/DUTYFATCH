@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Заголовок вкладки catalog.js заменит на название категории -->
+  <title>CATALOG — DUTYFATCH</title>
+  <meta name="description" content="Каталог винтажной одежды DUTYFATCH: что в наличии и что едет.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div id="site-header"></div>
+
+  <main class="main">
+    <section class="catalog">
+      <!-- Название категории слева, количество вещей справа -->
+      <div class="catalog__head">
+        <h1 class="catalog__title" id="catalog-title"></h1>
+        <span class="catalog__count" id="catalog-count"></span>
+      </div>
+
+      <!-- Кнопки категорий (на телефоне листаются вбок) -->
+      <nav class="cat-tabs" id="cat-tabs" aria-label="Категории"></nav>
+
+      <!-- Сетка карточек -->
+      <div class="grid" id="catalog-grid"><p class="message">Загрузка…</p></div>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <!-- Порядок важен: данные → общие функции → код каталога -->
+  <script src="js/data.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/catalog.js"></script>
+</body>
+</html>
