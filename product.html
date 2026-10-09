@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Заголовок вкладки product.js заменит на бренд и название вещи -->
+  <title>DUTYFATCH</title>
+  <meta name="description" content="Винтажная одежда DUTYFATCH: фото, размер и замеры вещи.">
+
+  <!-- Здесь у IBM Plex Mono есть ещё жирный 700 — для бренда и цены -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div id="site-header"></div>
+
+  <main class="main">
+    <!-- Фото и информация о вещи: product.js заполнит после загрузки таблицы -->
+    <section class="product" id="product">
+      <p class="message">Загрузка…</p>
+    </section>
+
+    <!-- Похожие вещи. Скрыты, пока товар не загрузился -->
+    <section class="section more" id="more-pickups" hidden>
+      <div class="section__head">
+        <h2 class="section__title">MORE PICKUPS</h2>
+        <a class="section__more" id="more-link" href="catalog.html?cat=all">ALL →</a>
+      </div>
+      <div class="carousel" id="more-carousel"></div>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <!-- Окно замеров. Закрытие: крестик, клик по затемнению, Esc -->
+  <div class="measure" id="measure" hidden>
+    <div class="measure__panel" role="dialog" aria-modal="true" aria-labelledby="measure-title">
+      <div class="measure__head">
+        <h2 class="measure__title" id="measure-title"></h2>
+        <button class="icon-btn measure__close" type="button" aria-label="Закрыть замеры">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <path d="M5 5l14 14M19 5L5 19" />
+          </svg>
+        </button>
+      </div>
+      <!-- Фото и таблицу product.js вставит под выбранный размер -->
+      <div class="measure__body" id="measure-body"></div>
+    </div>
+  </div>
+
+  <!-- Фото на весь экран, поверх окна замеров. Закрытие: крестик, клик по фону, Esc -->
+  <div class="lightbox" id="lightbox" hidden role="dialog" aria-modal="true" aria-label="Фото на весь экран">
+    <button class="icon-btn lightbox__close" type="button" aria-label="Закрыть фото">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+        <path d="M5 5l14 14M19 5L5 19" />
+      </svg>
+    </button>
+    <img class="lightbox__img" id="lightbox-img" src="" alt="">
+  </div>
+
+  <!-- Порядок важен: данные → общие функции → код страницы товара -->
+  <script src="js/data.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/product.js"></script>
+</body>
+</html>

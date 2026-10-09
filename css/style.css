@@ -13,6 +13,8 @@
   --gutter: 16px;         /* отступ от краёв экрана */
   --radius-card: 8px;     /* скругление фото товара */
   --radius-tile: 14px;    /* скругление плиток категорий */
+  --radius-photo: 14px;   /* скругление большого фото на странице товара */
+  --radius-btn: 8px;      /* скругление кнопок и выпадающего списка */
 }
 
 /* ===== Базовые правила ===== */
@@ -487,6 +489,487 @@ img {
   font-size: 12px;
 }
 
+/* ===== Страница товара ===== */
+.product {
+  padding: 16px 0 40px;
+}
+
+/* --- Фото --- */
+.gallery__main {
+  position: relative; /* чтобы поставить лупу в угол */
+}
+
+/* Лента больших фото: листается свайпом и «защёлкивается» на фото */
+.gallery__track {
+  position: relative; /* от неё считается offsetLeft фото в product.js */
+  display: flex;
+  gap: 8px;
+  /* На телефоне лента до правого края экрана — там выглядывает следующее фото */
+  margin-right: calc(-1 * var(--gutter));
+  padding-right: var(--gutter);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none; /* полосу прокрутки прячем — листают пальцем */
+}
+
+.gallery__track::-webkit-scrollbar {
+  display: none;
+}
+
+/* 86% ширины — справа виден край следующего фото */
+.gallery__slide {
+  flex: 0 0 86%;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  border-radius: var(--radius-photo);
+  background: var(--placeholder);
+  scroll-snap-align: start;
+}
+
+/* Одно фото — на всю ширину, листать нечего */
+.gallery--single .gallery__slide {
+  flex-basis: 100%;
+}
+
+.gallery__slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Фото нет — серая заглушка */
+.gallery__empty {
+  aspect-ratio: 3 / 4;
+  border-radius: var(--radius-photo);
+  background: var(--placeholder);
+}
+
+/* Круглая кнопка-лупа в левом верхнем углу */
+.gallery__zoom {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--bg);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.gallery__zoom:hover {
+  background: var(--text);
+  color: var(--bg);
+}
+
+/* Ряд миниатюр со стрелками по бокам */
+.gallery__nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 10px;
+}
+
+.gallery__arrow {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 44px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--text);
+  cursor: pointer;
+}
+
+/* На первом/последнем фото стрелка бледная и не нажимается */
+.gallery__arrow:disabled {
+  opacity: 0.25;
+  cursor: default;
+}
+
+.gallery__thumbs {
+  position: relative; /* от него считается offsetLeft миниатюр */
+  flex: 1;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.gallery__thumbs::-webkit-scrollbar {
+  display: none;
+}
+
+.gallery__thumb {
+  flex: 0 0 56px;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  padding: 0;
+  border: 1.5px solid transparent;
+  border-radius: 6px;
+  background: var(--placeholder);
+  cursor: pointer;
+}
+
+/* Активная миниатюра обведена чёрным */
+.gallery__thumb.is-active {
+  border-color: var(--line);
+}
+
+.gallery__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* --- Информация --- */
+.product__info {
+  margin-top: 24px;
+}
+
+/* Бренд жирным, под ним название модели обычным */
+.product__title {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-family: var(--font-mono);
+  font-size: 16px;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+
+.product__brand {
+  font-weight: 700;
+}
+
+.product__name {
+  font-weight: 400;
+}
+
+.product__price {
+  margin-top: 12px;
+  font-size: 18px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.product__status {
+  margin-top: 12px;
+  font-size: 13px;
+}
+
+.product__eta {
+  font-size: 13px;
+}
+
+/* pre-line — переносы строк из таблицы сохраняются */
+.product__desc {
+  margin-top: 16px;
+  white-space: pre-line;
+}
+
+/* --- Размер и кнопка «Замеры» --- */
+.size {
+  display: flex;
+  align-items: flex-end; /* кнопка на одной линии с выпадающим списком */
+  gap: 12px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+
+.size__choice {
+  flex: 1;
+  min-width: 0;
+}
+
+.size__label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+
+/* Высота как у кнопки — текст ровно напротив неё */
+.size__single {
+  font-weight: 500;
+  line-height: 44px;
+}
+
+/* Выпадающий список в рамке; стандартную стрелку убираем, рисуем свою ▼ */
+.select {
+  position: relative;
+}
+
+.select select {
+  width: 100%;
+  height: 44px;
+  padding: 0 40px 0 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-btn);
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  text-transform: uppercase;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+
+.select::after {
+  content: "▼";
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  transform: translateY(-50%);
+  font-size: 10px;
+  pointer-events: none; /* клик по стрелке проходит в список */
+}
+
+/* Кнопка с рамкой («Замеры») */
+.btn-outline {
+  flex: none;
+  height: 44px;
+  padding: 0 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-btn);
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.btn-outline:hover {
+  background: var(--text);
+  color: var(--bg);
+}
+
+/* --- Блок заказа --- */
+.order {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+
+.order__text {
+  font-size: 13px;
+}
+
+/* Чёрная кнопка на всю ширину */
+.btn-black {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  height: 52px;
+  margin-top: 14px;
+  border-radius: var(--radius-btn);
+  background: var(--text);
+  color: var(--bg);
+  font-family: var(--font-head);
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.btn-black:hover {
+  opacity: 0.85;
+}
+
+.order__sold {
+  font-weight: 700;
+}
+
+.order__similar {
+  display: inline-block;
+  margin-top: 8px;
+  border-bottom: 1px solid var(--line);
+}
+
+/* --- Товар не найден --- */
+.product__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 64px 0;
+  text-align: center;
+}
+
+.product__empty-title {
+  font-family: var(--font-head);
+  font-size: 24px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.product__empty-link {
+  border-bottom: 1px solid var(--line);
+}
+
+/* --- MORE PICKUPS --- */
+.more {
+  border-top: 1px solid var(--line);
+  scroll-margin-top: 72px; /* по ссылке «Смотреть похожие» заголовок не уйдёт под шапку */
+}
+
+/* --- Окно замеров --- */
+/* Затемнение на весь экран, окно по центру */
+.measure {
+  position: fixed;
+  inset: 0;
+  z-index: 150; /* выше шапки, ниже фото на весь экран */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px; /* на телефоне окно почти на весь экран */
+  background: var(--overlay);
+}
+
+.measure[hidden] {
+  display: none;
+}
+
+/* Белое окно: шапка с крестиком стоит, содержимое прокручивается */
+.measure__panel {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-height: 100%;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-btn);
+  background: var(--bg);
+  overflow: hidden;
+}
+
+.measure__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 6px 6px 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.measure__title {
+  margin: 0;
+  font-family: var(--font-head);
+  font-size: 20px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.measure__body {
+  padding: 16px;
+  overflow-y: auto;
+  overscroll-behavior: contain; /* прокрутка окна не передаётся странице */
+}
+
+/* Фото 2×2 — и на телефоне тоже */
+.measure__photos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.measure__photo {
+  aspect-ratio: 3 / 4;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-card);
+  background: var(--placeholder);
+  overflow: hidden;
+  cursor: zoom-in;
+}
+
+.measure__photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Таблица замеров: подпись слева, значение справа, тонкие линии между строк */
+.measure__table {
+  width: 100%;
+  margin-top: 16px;
+  border-collapse: collapse;
+}
+
+/* Фото нет — таблица сразу под шапкой, без отступа */
+.measure__table:first-child {
+  margin-top: 0;
+}
+
+.measure__table th,
+.measure__table td {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 13px;
+  vertical-align: top;
+}
+
+.measure__table tr:last-child th,
+.measure__table tr:last-child td {
+  border-bottom: none;
+}
+
+.measure__table th {
+  padding-right: 16px;
+  font-weight: 400;
+  text-align: left;
+}
+
+.measure__table td {
+  font-weight: 500;
+  text-align: right;
+  white-space: nowrap; /* «72 см» не разрывается */
+}
+
+.measure__empty {
+  margin: 0;
+  font-size: 13px;
+}
+
+/* --- Фото на весь экран --- */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 56px var(--gutter);
+  background: var(--bg);
+}
+
+/* display: flex выше перебивает атрибут hidden — возвращаем скрытие */
+.lightbox[hidden] {
+  display: none;
+}
+
+.lightbox__img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.lightbox__close {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+}
+
 /* ===== Компьютер (экран от 900px) ===== */
 @media (min-width: 900px) {
   :root {
@@ -555,5 +1038,61 @@ img {
   .grid {
     grid-template-columns: repeat(3, minmax(0, 1fr)); /* 3 колонки */
     gap: 48px 20px;
+  }
+
+  /* Страница товара: фото слева, информация справа */
+  .product {
+    padding: 40px 0 56px;
+  }
+
+  .product__layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); /* фото и миниатюры помещаются в экран */
+    gap: 56px;
+    align-items: start;
+    max-width: 1040px;
+    margin: 0 auto;
+  }
+
+  /* Лента в своей колонке, до края экрана не тянется */
+  .gallery__track {
+    margin-right: 0;
+    padding-right: 0;
+  }
+
+  .gallery__thumb {
+    flex-basis: 64px;
+  }
+
+  /* Информация «прилипает» под шапкой, пока листаешь страницу */
+  .product__info {
+    position: sticky;
+    top: 140px;
+    margin-top: 0;
+  }
+
+  .product__title {
+    font-size: 18px;
+  }
+
+  .product__price {
+    font-size: 20px;
+  }
+
+  .more {
+    scroll-margin-top: 130px;
+  }
+
+  /* Окно замеров на компьютере — аккуратное, по центру */
+  .measure {
+    padding: 40px;
+  }
+
+  .measure__panel {
+    max-width: 560px;
+  }
+
+  .measure__body {
+    padding: 20px;
   }
 }
