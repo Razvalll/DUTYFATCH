@@ -53,9 +53,10 @@ coming → COMING SOON, sold → SOLD. Ссылка: catalog.html?cat=<slug>.
 
 ## Данные — Google Таблица «DUTYFATCH_product» (опубликована как CSV)
 - products: https://docs.google.com/spreadsheets/d/e/2PACX-1vRfdM_9SzDzNbzqsu9LNzF4m5x17RPtjNGe044BoFmLLByB6FAA2OmSIhWCnpUaDHA4abtFuA1Ewac2/pub?gid=0&single=true&output=csv
-  колонки: id, brand, name, category, price, status, sold_date, eta, photos, description
+  колонки: id, brand, name, category, price, status, sold_date, eta, photos, description, new_in
   (status: available | reserved | transit | sold; photos — пути через запятую;
-  sold_date — ГГГГ-ММ-ДД; eta — текст по-русски)
+  sold_date — ГГГГ-ММ-ДД; eta — текст по-русски;
+  new_in — yes (регистр и пробелы не важны) = показывать в NEW IN на главной, пусто = нет)
 - measurements: https://docs.google.com/spreadsheets/d/e/2PACX-1vRfdM_9SzDzNbzqsu9LNzF4m5x17RPtjNGe044BoFmLLByB6FAA2OmSIhWCnpUaDHA4abtFuA1Ewac2/pub?gid=310853231&single=true&output=csv
   колонки: product_id, size, length, chest, sleeve, waist, inseam, photo1–photo4
   (одна строка = один размер; measurements.product_id = products.id)

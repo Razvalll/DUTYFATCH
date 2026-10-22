@@ -1,25 +1,23 @@
-/* ===== Переменные: цвета и шрифты в одном месте ===== */
 :root {
-  --bg: #ffffff;          /* фон */
-  --text: #000000;        /* основной текст */
-  --muted: #8a8a8a;       /* серый (бренд, подписи) */
-  --line: #000000;        /* тонкие разделители */
-  --placeholder: #e9e9e9; /* серая заглушка вместо фото */
-  --overlay: rgba(0, 0, 0, 0.4); /* затемнение под меню */
+  --bg: #ffffff;          
+  --text: #000000;        
+  --muted: #8a8a8a;       
+  --line: #000000;        
+  --placeholder: #e9e9e9; 
+  --overlay: rgba(0, 0, 0, 0.4); 
 
-  --font-head: "Oswald", "Arial Narrow", sans-serif;   /* меню, заголовки */
-  --font-mono: "IBM Plex Mono", "Courier New", monospace; /* товары, цены, текст */
-
-  --gutter: 16px;         /* отступ от краёв экрана */
-  --radius-card: 8px;     /* скругление фото товара */
-  --radius-tile: 14px;    /* скругление плиток категорий */
-  --radius-photo: 14px;   /* скругление большого фото на странице товара */
-  --radius-btn: 8px;      /* скругление кнопок и выпадающего списка */
+  --font-head: "Oswald", "Arial Narrow", sans-serif;  
+  --font-mono: "IBM Plex Mono", "Courier New", monospace; 
+  --gutter: 16px;         
+  --radius-card: 8px;     
+  --radius-tile: 14px;    
+  --radius-photo: 14px;  
+  --radius-btn: 8px;     
 }
 
-/* ===== Базовые правила ===== */
+
 * {
-  box-sizing: border-box; /* ширина элемента включает padding и рамку */
+  box-sizing: border-box; 
 }
 
 body {
@@ -29,9 +27,11 @@ body {
   font-family: var(--font-mono);
   font-size: 14px;
   line-height: 1.5;
+  
+  overflow-wrap: anywhere;
 }
 
-/* Пока открыто меню, страница под ним не прокручивается */
+
 body.no-scroll {
   overflow: hidden;
 }
@@ -50,7 +50,7 @@ img {
   max-width: 100%;
 }
 
-/* ===== Шапка ===== */
+
 .header {
   position: sticky; /* шапка «прилипает» к верху при прокрутке */
   top: 0;
@@ -970,7 +970,7 @@ img {
   right: 6px;
 }
 
-/* ===== Компьютер (экран от 900px) ===== */
+
 @media (min-width: 900px) {
   :root {
     --gutter: 40px;

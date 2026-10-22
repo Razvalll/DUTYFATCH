@@ -1,0 +1,5 @@
+# Настройки Claude Code — личные, на сайте не нужны
+.claude/
+
+# Схема базы SQL Server — статическому сайту на GitHub Pages не нужна
+sql/

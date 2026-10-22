@@ -259,7 +259,7 @@ function renderMeasure() {
     ? `<div class="measure__photos">
         ${photos.map((src, i) => `
           <button class="measure__photo" type="button" aria-label="Увеличить фото ${i + 1}">
-            <img src="${escapeHtml(src)}" alt="${escapeHtml(alt)}, фото ${i + 1}" onerror="this.remove()">
+            <img src="${escapeHtml(src)}" alt="${escapeHtml(alt)}, фото ${i + 1}" loading="lazy" onerror="this.remove()">
           </button>`).join("")}
       </div>`
     : "";

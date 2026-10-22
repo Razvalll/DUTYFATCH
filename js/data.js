@@ -1,4 +1,17 @@
-// data.js — загрузка товаров и замеров из Google Таблицы (опубликована как CSV).
+// data.js — загрузка товаров и замеров.
+// Сейчас данные берутся из Google Таблицы (CSV). Потом можно перейти на базу SQL Server:
+// поменять DATA_SOURCE на "api" и указать API_URL — остальной сайт менять не придётся.
+
+// ===== Откуда брать данные =====
+// "sheets" — Google Таблица (сейчас)
+// "api"    — свой сервер, который читает базу SQL Server и отдаёт JSON (см. sql/schema.sql)
+const DATA_SOURCE = "sheets";
+
+// Адрес сервера для "api", без «/» в конце. Сервер должен отдавать:
+//   API_URL + "/products"     → [{ "id": "101", "brand": "...", ... }, ...]
+//   API_URL + "/measurements" → [{ "product_id": "101", "size": "L", ... }, ...]
+// Названия полей — те же, что колонки в Google Таблице.
+const API_URL = "";
 
 const PRODUCTS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRfdM_9SzDzNbzqsu9LNzF4m5x17RPtjNGe044BoFmLLByB6FAA2OmSIhWCnpUaDHA4abtFuA1Ewac2/pub?gid=0&single=true&output=csv";
 const MEASUREMENTS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRfdM_9SzDzNbzqsu9LNzF4m5x17RPtjNGe044BoFmLLByB6FAA2OmSIhWCnpUaDHA4abtFuA1Ewac2/pub?gid=310853231&single=true&output=csv";
@@ -87,6 +100,49 @@ async function fetchCSV(url, requiredColumn) {
   return rowsToObjects(headers, rows.slice(1));
 }
 
+// Скачивает JSON-массив с сервера (для DATA_SOURCE = "api").
+// Все значения приводим к тексту, как в CSV: 480 → "480", null → "".
+// Тогда проверка строк ниже работает одинаково для таблицы и для базы.
+async function fetchJSON(url, requiredColumn) {
+  const response = await fetch(url, { cache: "no-store" });
+  if (!response.ok) {
+    throw new Error("Сервер не ответил, код " + response.status);
+  }
+
+  const items = await response.json();
+  if (!Array.isArray(items)) {
+    throw new Error("Сервер вернул не список");
+  }
+
+  const rows = items.map(item => {
+    const obj = {};
+    Object.keys(item).forEach(key => {
+      const value = item[key];
+      obj[key.toLowerCase()] = value === null || value === undefined ? "" : String(value).trim();
+    });
+    return obj;
+  });
+
+  if (rows.length > 0 && !(requiredColumn in rows[0])) {
+    throw new Error("В ответе сервера нет поля " + requiredColumn);
+  }
+  return rows;
+}
+
+// Сырые строки товаров и замеров. Только эта функция знает, откуда берутся данные
+function fetchRows() {
+  if (DATA_SOURCE === "api") {
+    return Promise.all([
+      fetchJSON(API_URL + "/products", "id"),
+      fetchJSON(API_URL + "/measurements", "product_id")
+    ]);
+  }
+  return Promise.all([
+    fetchCSV(PRODUCTS_CSV_URL, "id"),
+    fetchCSV(MEASUREMENTS_CSV_URL, "product_id")
+  ]);
+}
+
 // ===== Проверка и подготовка строк =====
 
 // "1 200" или "120,5" → число. Пусто или не число → null («Цена по запросу»)
@@ -129,7 +185,9 @@ function prepareProducts(rows) {
       eta: row.eta || "",
       // "a.jpg, b.jpg" → ["a.jpg", "b.jpg"], пустые куски убираем
       photos: (row.photos || "").split(",").map(p => p.trim()).filter(p => p !== ""),
-      description: row.description || ""
+      description: row.description || "",
+      // Показывать ли в NEW IN на главной: "yes" / "Yes" / " YES" → true, пусто → false
+      new_in: (row.new_in || "").trim().toLowerCase() === "yes"
     });
   });
 
@@ -153,12 +211,9 @@ function groupMeasurements(rows, products) {
   return groups;
 }
 
-// ===== Главная функция: грузит обе таблицы одновременно =====
+// ===== Главная функция: грузит товары и замеры одновременно =====
 async function loadData() {
-  const [productRows, measurementRows] = await Promise.all([
-    fetchCSV(PRODUCTS_CSV_URL, "id"),
-    fetchCSV(MEASUREMENTS_CSV_URL, "product_id")
-  ]);
+  const [productRows, measurementRows] = await fetchRows();
 
   PRODUCTS = prepareProducts(productRows);
   MEASUREMENTS = groupMeasurements(measurementRows, PRODUCTS);
