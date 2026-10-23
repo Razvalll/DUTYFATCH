@@ -1,0 +1,40 @@
+# Деплой сайта на GitHub Pages при каждом push в main
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: # кнопка «Run workflow» для ручного запуска во вкладке Actions
+
+# Права: читать код, публиковать на Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Если запушили дважды подряд — второй деплой ждёт первый, а не отменяет его
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }} # адрес сайта покажется в Actions
+    steps:
+      # 1. Скачать файлы репозитория
+      - uses: actions/checkout@v4
+
+      # 2. Подготовить Pages
+      - uses: actions/configure-pages@v5
+
+      # 3. Упаковать сайт. Сборки нет — берём корень репозитория как есть
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      # 4. Опубликовать
+      - id: deployment
+        uses: actions/deploy-pages@v4
