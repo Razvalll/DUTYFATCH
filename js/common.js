@@ -35,6 +35,11 @@ const TELEGRAM_ICON = `
     <path d="M21.9 4.3 18.7 19.4c-.2 1-.9 1.3-1.7.8l-4.8-3.5-2.3 2.2c-.3.3-.5.5-1 .5l.3-4.9 8.9-8c.4-.3-.1-.5-.6-.2L6.5 13.2 1.8 11.7c-1-.3-1-1 .2-1.5L20.5 3c.9-.3 1.6.2 1.4 1.3z" />
   </svg>`;
 
+// Плашка ORIGINAL — только если в таблице стоит флажок original
+function originalBadge(product) {
+  return product.original ? `<span class="mark">ORIGINAL</span>` : "";
+}
+
 // Защита от «ломающих» символов (<, &, ") в тексте из таблицы
 function escapeHtml(text) {
   return String(text)
@@ -175,8 +180,10 @@ function daysSinceSold(product) {
 
 // Показывать ли товар в категории slug. Одна функция для главной и каталога.
 function isVisibleIn(product, slug) {
-  // «Своё место» — категория товара или ALL PRODUCTS
-  const ownPlace = slug === "all" || slug === product.category;
+  // «Своё место» — ALL PRODUCTS; VINTAGE — все вещи с флажком vintage
+  // из любой категории; остальные категории — по колонке category
+  const ownPlace = slug === "all"
+    || (slug === "vintage" ? product.vintage : slug === product.category);
 
   switch (product.status) {
     case "available":
@@ -242,6 +249,7 @@ function productCard(product) {
     <a class="card${isSold ? " card--sold" : ""}" href="product.html?id=${encodeURIComponent(product.id)}">
       <div class="card__photo">
         ${img}
+        ${originalBadge(product)}
         ${mark}
       </div>
       <p class="card__brand">${escapeHtml(product.brand)}</p>

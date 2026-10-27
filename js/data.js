@@ -153,6 +153,14 @@ function parsePrice(value) {
   return Number.isFinite(number) ? number : null;
 }
 
+// Колонка-флажок. Флажок Google Таблиц приходит в CSV как TRUE / FALSE,
+// в старых строках вместо него написано yes. Регистр и пробелы не важны:
+// TRUE / yes → true; FALSE, пусто или колонки нет → false
+function isFlagOn(value) {
+  const text = (value || "").trim().toLowerCase();
+  return text === "true" || text === "yes";
+}
+
 // Проверяем каждую строку: плохую пропускаем, остальные приводим к нужному виду
 function prepareProducts(rows) {
   const products = [];
@@ -186,8 +194,9 @@ function prepareProducts(rows) {
       // "a.jpg, b.jpg" → ["a.jpg", "b.jpg"], пустые куски убираем
       photos: (row.photos || "").split(",").map(p => p.trim()).filter(p => p !== ""),
       description: row.description || "",
-      // Показывать ли в NEW IN на главной: "yes" / "Yes" / " YES" → true, пусто → false
-      new_in: (row.new_in || "").trim().toLowerCase() === "yes"
+      new_in: isFlagOn(row.new_in),     // показывать ли в NEW IN на главной
+      original: isFlagOn(row.original), // плашка ORIGINAL: оригинальный бренд подтверждён
+      vintage: isFlagOn(row.vintage)    // винтаж: попадает в VINTAGE из любой категории, плашки нет
     });
   });
 

@@ -356,6 +356,10 @@ function renderProduct(product) {
     ? `<p class="product__eta">Ожидается: ${escapeHtml(product.eta)}</p>`
     : "";
 
+  // Плашка ORIGINAL — строкой под названием, если у вещи стоит флажок original
+  const marksHtml = originalBadge(product);
+  const marks = marksHtml ? `<div class="product__marks">${marksHtml}</div>` : "";
+
   const description = product.description
     ? `<p class="product__desc">${escapeHtml(product.description)}</p>`
     : "";
@@ -369,6 +373,7 @@ function renderProduct(product) {
           ${brand}
           <span class="product__name">${escapeHtml(product.name)}</span>
         </h1>
+        ${marks}
         <p class="product__price">${formatPrice(product.price)}</p>
         <p class="product__status">${STATUS_TEXT[product.status]}</p>
         ${eta}

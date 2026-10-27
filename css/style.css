@@ -299,6 +299,41 @@ img {
   line-height: 1.4;
 }
 
+/* ===== Плашка ORIGINAL: рамка, как у плашки статуса, только меньше ===== */
+.mark {
+  display: inline-block;
+  padding: 1px 6px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.04em;
+}
+
+/* На карточке — в левом верхнем углу фото (статус — в левом нижнем) */
+.card__photo > .mark {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+}
+
+/* На странице товара — строкой под названием */
+.product__marks {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.product__marks .mark {
+  font-size: 11px;
+}
+
 /* «Ожидается: …» под ценой у едущих вещей */
 .card__eta {
   margin-top: 2px;
