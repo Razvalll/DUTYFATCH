@@ -23,7 +23,7 @@ const STATUS_LABELS = {
   available: "",
   reserved: "ЗАБРОНИРОВАНО",
   transit: "В ПУТИ",
-  sold: "ПРОДАНО"
+  sold: "SOLD"
 };
 
 // Сколько дней проданная вещь остаётся на своём месте, потом уходит только в SOLD
